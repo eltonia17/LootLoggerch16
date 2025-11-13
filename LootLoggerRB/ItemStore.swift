@@ -1,11 +1,16 @@
 //
 //  ItemStore.swift
-//  LootLoggerRB
-//
-//  Created by P.Breaker on 10/7/25.
+//  LootLogger CH 13-16
+//  Eltonia Leonard
 //
 
 import UIKit
+
+// CH13 BronzeChallenge: Define an error type that the ItemStore can throw
+enum ItemStoreError: Error {
+    case failedToSave
+}
+
 
 class ItemStore {
 
@@ -47,7 +52,7 @@ class ItemStore {
         allItems.insert(movedItem, at: toIndex)
     }
     
-    @objc func saveChanges() -> Bool {
+    func saveChanges() throws -> Bool {
         
         print("Saving items to: \(itemArchiveURL)")
 
@@ -60,12 +65,20 @@ class ItemStore {
             } catch let encodingError {
                 print("Error encoding allItems: \(encodingError)")
                 
-                return false
+                throw ItemStoreError.failedToSave
             }
 
         
     }
-    
+    //CH 13 Bronze Challenge add on
+    @objc func saveChangesSilently() {
+        do {
+            _ = try saveChanges()
+        } catch {
+            print("Error saving changes silently: \(error)")
+        }
+    }
+
     init() {
         do {
                 let data = try Data(contentsOf: itemArchiveURL)
@@ -78,7 +91,7 @@ class ItemStore {
         
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self,
-                                       selector: #selector(saveChanges),
+                                       selector: #selector(saveChangesSilently),
                                        name: UIScene.didEnterBackgroundNotification,
                                        object: nil)
     }

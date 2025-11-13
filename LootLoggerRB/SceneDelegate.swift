@@ -2,7 +2,6 @@
 //  SceneDelegate.swift
 //  LootLoggerRB
 //
-//  Created by P.Breaker on 10/7/25.
 //
 
 import UIKit
@@ -54,9 +53,32 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
+        // CH13 Bronze Challenge: 1. Get the Navigation Controller (root)
+        guard let navViewController = window?.rootViewController as? UINavigationController else {
+            return
+        }
+        
+        // 2. Get the ItemsViewController (the top of the nav stack)
+        guard let itemsViewController = navViewController.topViewController as? ItemsViewController else {
+            return
+        }
+        
+        // 3. Access the itemStore instance that was assigned to the ItemsViewController
+        guard let itemStore = itemsViewController.itemStore else {
+            return
+        }
+        
+        // 4. Call the throwing method inside a do catch block
+        do {
+            let success = try itemStore.saveChanges()
+            
+            if success {
+                print("Bronze Challenge: Successfully saved all items.")
+            }
+        } catch {
+            // This block executes if saveChanges() throws an error
+            print("Bronze Challenge: Could not save items: \(error)")
+        }
     }
     
     

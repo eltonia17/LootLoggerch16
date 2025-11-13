@@ -1,8 +1,7 @@
 //
 //  DetailViewController.swift
-//  LootLoggerRB
-//
-//  Created by P.Breaker on 10/23/25.
+//  LootLogger CH 13-16
+//  Eltonia Leonard
 //
 
 import UIKit
