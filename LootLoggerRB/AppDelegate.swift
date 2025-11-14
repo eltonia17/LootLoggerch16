@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  LootLoggerRB
+//  LootLogger CH 13-16
 //
 //
 

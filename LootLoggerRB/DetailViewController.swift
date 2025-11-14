@@ -43,7 +43,7 @@ class DetailViewController: UIViewController, UITextFieldDelegate, UINavigationC
             }
             alertController.addAction(cameraAction)
         }
-
+        
         
         let photoLibraryAction
         = UIAlertAction(title: "Photo Library", style: .default) { _ in
@@ -55,6 +55,16 @@ class DetailViewController: UIViewController, UITextFieldDelegate, UINavigationC
         }
         alertController.addAction(photoLibraryAction)
         
+        // CH 15 SILVER CHALLENGE: Remove Photo Action
+        let deleteAction = UIAlertAction(title: "Remove Photo", style: .default) { _ in
+            // Clear the image from the UIImageView
+            self.imageView.image = nil
+            
+            // Delete the image from the ImageStore using the item's key
+            self.imageStore.deleteImage(forKey: self.item.itemKey)
+        }
+        alertController.addAction(deleteAction)
+        
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
         
@@ -65,22 +75,27 @@ class DetailViewController: UIViewController, UITextFieldDelegate, UINavigationC
     -> UIImagePickerController {
         let imagePicker = UIImagePickerController()
         imagePicker.sourceType = sourceType
+        // CH 15 BRONZE CHALLENGE: Allow image editing
+        imagePicker.allowsEditing = true
         imagePicker.delegate = self
         return imagePicker
     }
     
     func imagePickerController(_ picker: UIImagePickerController,
-            didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-
-        // Get picked image from info dictionary
-        let image = info[.originalImage] as! UIImage
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        
+        
+        
+        // CH 15 BRONZE CHALLENGE CHANGE 2: Retrieve the edited image first
+        // Get picked image from info dictionary (prioritize edited image)
+        let image = info[.editedImage] as? UIImage ?? info[.originalImage] as! UIImage
         
         // Store the image in the ImageStore for the item's key
         imageStore.setImage(image, forKey: item.itemKey)
-
+        
         // Put that image on the screen in the image view
         imageView.image = image
-
+        
         // Take image picker off the screen - you must call this dismiss method
         dismiss(animated: true, completion: nil)
     }
@@ -111,11 +126,11 @@ class DetailViewController: UIViewController, UITextFieldDelegate, UINavigationC
         dateLabel.text = dateFormatter.string(from: item.dateCreated)
         
         // Get the item key
-            let key = item.itemKey
-
-            // If there is an associated image with the item, display it on the image view
-            let imageToDisplay = imageStore.image(forKey: key)
-            imageView.image = imageToDisplay
+        let key = item.itemKey
+        
+        // If there is an associated image with the item, display it on the image view
+        let imageToDisplay = imageStore.image(forKey: key)
+        imageView.image = imageToDisplay
     }
     
     override func viewWillDisappear(_ animated: Bool) {
